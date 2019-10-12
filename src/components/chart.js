@@ -2,9 +2,9 @@
 
 import Chart from 'chart.js';
 
-export default function createFeatureChart (model) {
+export function createFeatureChart (model) {
 	const { charts } = model.dashboard;
-	if(!charts || !charts.building) return null; // TODO: show loading
+	if(!charts || !charts.building) return null;
 	console.log(charts.building);
 	
 	var ctx = document.getElementById('featureChart');
@@ -43,45 +43,63 @@ export default function createFeatureChart (model) {
 	        }
 	    }
 	});
-
 	
-	/*
+}
+
+
+function val(n) {
+	
+	return Number.isInteger(n)?n:0;
+	
+}
+
+
+
+export function createStatusChart (model) {
+	
+	if(!model.project) return null;
+	
+	var ctx = document.getElementById('statusChart');
+	
+	
+	var mappedPct = val(model.project.percentMapped);
+	var validPct = val(model.project.percentValidated);
+	var badPct = val(model.project.percentBadImagery);
+	var remPct = 100 - mappedPct - validPct - badPct;
+	
 	var myChart = new Chart(ctx, {
-	    type: 'line',
-	    data: {
-	        labels: ['AAA', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-	        datasets: [{
-	            label: '# of Votes',
-	            data: [12, 19, 3, 5, 2, 3],
-	            backgroundColor: [
-	                'rgba(255, 99, 132, 0.2)',
-	                'rgba(54, 162, 235, 0.2)',
-	                'rgba(255, 206, 86, 0.2)',
-	                'rgba(75, 192, 192, 0.2)',
-	                'rgba(153, 102, 255, 0.2)',
-	                'rgba(255, 159, 64, 0.2)'
-	            ],
-	            borderColor: [
-	                'rgba(255, 99, 132, 1)',
-	                'rgba(54, 162, 235, 1)',
-	                'rgba(255, 206, 86, 1)',
-	                'rgba(75, 192, 192, 1)',
-	                'rgba(153, 102, 255, 1)',
-	                'rgba(255, 159, 64, 1)'
-	            ],
-	            borderWidth: 1
-	        }]
+	    type: 'doughnut',
+	    data: { datasets: [{
+	        data: [
+	        	validPct,
+	        	mappedPct, 
+	        	badPct,
+	        	remPct
+	        ],
+			backgroundColor: [
+				'#008000',
+				'#6A5ACD',
+				'#FF4500',
+				'#D3D3D3'
+			]
+	    }],
+	    labels: [
+	        'Validated',
+	        'Mapped',
+	        'Bad Imagery',
+	        'Not mapped'
+	    ]
 	    },
 	    options: {
-	        scales: {
-	            yAxes: [{
-	                ticks: {
-	                    beginAtZero: true
-	                }
-	            }]
-	        }
+	        legend: {
+	            display: true,
+	            position: 'bottom',
+	            labels: {
+	                fontColor: 'black',
+	                fontSize: 12
+	            }
+	        },
 	    }
 	});
-	 */
 	
 }
