@@ -11,16 +11,33 @@ function getCharts(startDateTime, endDateTime, OSMData) {
   return charts;
 };
 
+function updateUserStats(userStats, OSMData) {
+  function getMappedFeaturesPerUser(features) {
+    const aggregatedFeatures = new Map();
+    features.forEach(feature => {
+      const { user } = feature.properties;
+      aggregatedFeatures.set(user, (aggregatedFeatures.get(user) + 1 || 1));
+    });
+    return [...aggregatedFeatures]
+      .map(feature => ({ user: feature[0], count: feature[1] }))
+      .sort((featureA, featureB) => featureB.count - featureA.count);
+  }
+  
+  if (OSMData.building) userStats.mappedBuildingsPerUser = getMappedFeaturesPerUser(OSMData.building.features);
+};
+
 export function reduceState(state, action) {
   function reset(state) {
     return state;
   }
-  
-  state = reset(state);
-  if (!state.dashboard) state.dashboard = {};
 
-  const dataUpdate = function()
-  {
+  state = reset(state);
+  if (!state.dashboard)
+    state.dashboard = {
+      userStats: {}
+    };
+
+  const dataUpdate = function () {
     state.timeoutId = null;
     PubSub.publish('ACTIONS', state);
   };
@@ -34,16 +51,14 @@ export function reduceState(state, action) {
       state.changesets = null;
       state.OSMData = null;
       state.leaderboard = null;
-      if(state.timeoutId)
-      {
+      if (state.timeoutId) {
         clearTimeout(state.timeoutId);
         state.timeoutId = null;
       }
       state.calculations = null;
       return state;
     case 'GET_OSM_DATA':
-      if(state.timeoutId)
-      {
+      if (state.timeoutId) {
         clearTimeout(state.timeoutId);
         state.timeoutId = null;
       }
@@ -76,6 +91,7 @@ export function reduceState(state, action) {
       state.loadingMessage = null;
       state.lastUpdateTime = moment();
       state.timeoutId = window.setTimeout(dataUpdate, state.delay);
+      updateUserStats(state.dashboard.userStats, state.OSMData);
       return state;
     case 'UPDATE_CHANGESETS_AND_OSM_DATA':
       state.changesets = action.payload.changesets;
@@ -85,6 +101,7 @@ export function reduceState(state, action) {
       state.dashboard.charts = getCharts(state.startDateTime, state.endDateTime, state.OSMData);
       state.lastUpdateTime = moment();
       state.timeoutId = window.setTimeout(dataUpdate, state.delay);
+      updateUserStats(state.dashboard.userStats, state.OSMData);
       return state;
   }
 
