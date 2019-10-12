@@ -3,7 +3,7 @@
 import h from 'snabbdom/h';
 import { header, searchBar, taskHeader, taskData, taskLeaderboard, taskProgress, showError } from './layout';
 import dashboard from './dashboard';
-import { getProjectData, getBBox, getChangesets, getOSMBuildings, refreshData  } from '../Ajax';
+import { getProjectData, getBBox, getChangesets, getOSMBuildings, refreshData, getProjectContributions  } from '../Ajax';
 
 import 'leaflet/dist/leaflet.css';
 
@@ -22,6 +22,7 @@ export default function App(model) {
 
     if(model.bbox && !model.changesets) {
       model.loadingMessage = "Retrieving project modifications...";
+      if (model.dashboard) getProjectContributions(model.project.id);
       getChangesets(model.bbox, model.startDateTime, model.endDateTime, model.project.id);
     }
     

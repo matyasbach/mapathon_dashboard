@@ -11,7 +11,8 @@ function getCharts(startDateTime, endDateTime, OSMData) {
   return charts;
 };
 
-function updateUserStats(userStats, OSMData) {
+function updateUserStats(userStats, OSMData, contributions) {
+  function sortByCount(a, b) { return b.count - a.count; }
   function getMappedFeaturesPerUser(features) {
     const aggregatedFeatures = new Map();
     features.forEach(feature => {
@@ -20,10 +21,21 @@ function updateUserStats(userStats, OSMData) {
     });
     return [...aggregatedFeatures]
       .map(feature => ({ user: feature[0], count: feature[1] }))
-      .sort((featureA, featureB) => featureB.count - featureA.count);
+      .sort(sortByCount);
   }
-  
-  if (OSMData.building) userStats.mappedBuildingsPerUser = getMappedFeaturesPerUser(OSMData.building.features);
+
+  function getContributions(type) {
+    return contributions
+      .filter(contribution => contribution[type] != 0)
+      .map(contribution => ({ user: contribution.username, count: contribution[type] }))
+      .sort(sortByCount);
+  }
+
+  if (OSMData && OSMData.building) userStats.mappedBuildingsPerUser = getMappedFeaturesPerUser(OSMData.building.features);
+  if (contributions) {
+    userStats.tasksPerMapper = getContributions('mapped');
+    userStats.tasksPerValidator = getContributions('validated');
+  }
 };
 
 export function reduceState(state, action) {
@@ -79,6 +91,10 @@ export function reduceState(state, action) {
       return state;
     case 'SET_BBOX':
       state.bbox = action.payload;
+      return state;
+    case 'SET_CONTRIBUTIONS_DATA':
+      console.log("SET_CONTRIBUTIONS_DATA", action.payload.userContributions);
+      updateUserStats(state.dashboard.userStats, null, action.payload.userContributions);
       return state;
     case 'SET_CHANGESETS':
       state.changesets = action.payload;

@@ -5,25 +5,17 @@ import osmtogeojson from 'osmtogeojson';
 import { GeoJSON } from 'leaflet';
 import PubSub from './PubSub';
 import { setProjectData, setProjectContributions, setBBox, setChangesets, setOsmDataAndLeaderboard, updateChangesetsAndOsmData, setError } from './Actions';
-import { HOTOSM_API_URL, OSM_API_URL, OVP_DE } from './Variables';
+import { HOTOSM_API_URL, HOTOSM_STATS_API_URL, OSM_API_URL, OVP_DE } from './Variables';
 import { BAD_REQUEST, CONNECTION_TIMEOUT, INVALID_PROJECT_ID, TOO_MANY_REQUESTS, UNKNOWN_ERROR } from './Errors';
 import { computeLeaderboard } from './Leaderboard';
 import { sumLines, sumAreas } from './Calculations';
 
-const requests = [];
-
 function sendXHR(url) {
   return new Promise((resolve, reject) => {
-    if(requests.length>0)
-    {
-      const lastRequest = requests.pop();
-      lastRequest.abort();
-    }
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onload = () => {
-      requests.pop();
       switch(xhr.status)
       {
         case 200:
@@ -49,7 +41,6 @@ function sendXHR(url) {
       PubSub.publish('ACTIONS', setError({errorMessage: CONNECTION_TIMEOUT.format(url)}));
     };
     xhr.send();
-    requests.push(xhr);
   });
 }
 
