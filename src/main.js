@@ -15,6 +15,9 @@ const patch = init([
   require('snabbdom/modules/style').default
 ]);
 
+let node = {};
+let state = {};
+
 const initialState = {
   loadingMessage: null,
   startDateTime: moment().add(-60, 'm').set('minute', 0),
@@ -30,7 +33,7 @@ const initialState = {
   dashboard: null
 };
 
-function reduce(state, action) {
+export function reduce(state, action) {
 
   function reset(state) {
     return state;
@@ -110,30 +113,29 @@ function reduce(state, action) {
   return state;
 }
 
+export function updateState(msg, action) {
+  state = reduce(state, action);
+  update();
+}
+
+export function updateDashboardState(msg, action) {
+  state.dashboard = reduceDashboardState(state.dashboard, action);
+  update();
+}
+
+function update() {
+  console.log(state);
+  const newNode = App(state);
+  patch(node, newNode);
+  node = newNode;
+}
+
 function main(initState, initVnode, App) {
-  const updateState = function(msg, action) {
-    state = reduce(state, action);
-    update();
-  }
-
-  const updateDashboardState = function(msg, action) {
-    state.dashboard = reduceDashboardState(state.dashboard, action);
-    update();
-  }
-
-  const update = function() {
-    console.log(state);
-    newVnode = App(state);
-    patch(oldVnode, newVnode);
-    oldVnode = newVnode;
-  }
-
-  let newVnode = null, oldVnode = initVnode, state = initState;
+  node = initVnode;
+  state = initState;
 
   PubSub.subscribe('ACTIONS', updateState);
   PubSub.publish('ACTIONS', { type: 'START' });
-
-  PubSub.subscribe('DASHBOARD_ACTIONS', updateDashboardState);
 }
 
 main(initialState, document.querySelector('#root'), App);

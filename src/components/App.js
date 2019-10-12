@@ -47,7 +47,7 @@ function createLayout(model)
       header(),
       searchBar(model),
       h('div#task', [
-        dashboard(model.dashboard)
+        dashboard(model)
       ])
     ]);
   }
