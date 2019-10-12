@@ -1,6 +1,7 @@
 'use strict';
 
 import '../styles/layout.css';
+import { OVP_DE, OVP_RU, OVP_FR, DATETIME_FORMAT, HOTOSM_PROJECT_URL } from '../Variables';
 import h from 'snabbdom/h';
 import { inputCheckbox, inputNumber, inputText, form, select, option, div, paragraph, progressBar, a } from './basic';
 
@@ -13,13 +14,19 @@ export default function dashboard(model) {
 	  div({
 		    classes: ['task-box'],
 		    children: [
-
 		        div({
 		            children: [
-		              h('h2', {}, [
-		                h('text', {}, 'ABCD')
-		              ])
-		            ]
+		                h('h2', {}, [
+		                  a({
+		                    href: HOTOSM_PROJECT_URL + model.project.id,
+		                    target: '_blank',
+		                    children: [
+		                      h('span', {attrs: {class: 'task-id-head'}}, '#'+model.project.id)
+		                    ]
+		                  }),
+		                  h('text', {}, ' '+model.project.name)
+		                ])
+		              ]
 		          }),
 
 		      div({

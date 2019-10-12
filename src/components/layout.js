@@ -10,9 +10,6 @@ import { submitReport, submitDashboard } from '../UserEvents';
 import { destroyHighwayMap, displayHighwayMap, updateHighwayMap } from './highwayMap';
 import { destroyOverviewMap, displayOverviewMap, onCheckboxClicked, updateOverviewMap } from './overviewMap';
 
-import createFeatureChart from './chart';
-
-
 export function header() {
   return h('header', [
     headerImageLink({
@@ -128,7 +125,6 @@ export function searchBar(model) {
 
 export function taskHeader(model)
 {
-	
   return div({
     classes: ['task-box'],
     children: [
@@ -149,105 +145,41 @@ export function taskHeader(model)
       div({
         classes: ['task-grid'],
         children: [
-
-  	      div({
-	  	        classes: ['task-sub-section', 'three-column-task-sub-section'],
-	  	        children: [
-	  	          div({
-	  	            id: '',
-	  	            children: [
-	  	            	h('h4', {}, 'Progress'),
-	  	            ]
-	  	          }),
-	  	          div({
-		  	            id: '',
-		  	            children: [
-			              paragraph({
-			                  classes: ['task-info-key'],
-			                  text: 'Done'
-			                }),
-		                  progressBar({
-			                  id: 'task-progress-done',
-			                  value: model.project.percentMapped,
-			                  text: model.project.percentMapped+'%'
-			                }),
-			              paragraph({
-			                  text: model.project.percentMapped+'%'
-			                })
-			            ]
-	  	          }),
-	  	          div({
-		  	            id: '',
-		  	            children: [
-	                
-			              paragraph({
-			                    classes: ['task-info-key'],
-			                    text: 'Validated'
-			                  }),
-			              progressBar({
-			                    id: 'task-progress-validated',
-			                    value: model.project.percentValidated,
-			                    text: model.project.percentValidated+'%'
-			                  }),
-			                  paragraph({
-			                    text: model.project.percentValidated+'%'
-			                  })
-			  	        ]
-	  	          })
-	  	         ]
-	  		  }),
-        	        	
-	      div({
-	  	        classes: ['task-sub-section', 'three-column-task-sub-section'],
-	  	        children: [
-	    
-	  	          div({
-	  	            id: '',
-	  	            children: [
-	  	            	h('h4', {}, 'Progress'),
-	  	            ]
-	  	          }),
-	              div({
-	                  classes: ['task-info-key'],
-	                  children: [
-	                	  h('canvas', {attrs: {id:'featureChart', width: 300, height: 200},
-	                		  hook: {
-	                			  insert: (vnode) => { createFeatureChart(model); }
-	                		  }
-	                	  })
-	                  ]
-	                })
-	            ]
-	            
-	        }),
-	        
-	  	      div({
-		  	        classes: ['task-sub-section', 'three-column-task-sub-section'],
-		  	        children: [
-		  	          div({
-		  	            id: '',
-		  	            children: [
-		  	            	h('h4', {}, 'Totals'),
-		  	            ]
-		  	          }),
-
-			          div({
-				            children:[
-				            	h('p', {attrs: {class: 'task-info-key'}}, model.OSMData['highway']['features'].length + ' road(s) created (' + model.calculations.roadLength + ' km)')
-				            ]
-				          }),
-				          div({
-				            children:[
-				            	h('p', {attrs: {class: 'task-info-key'}}, model.OSMData['building']['features'].length + ' building(s) created')				            ]
-				          })
-			  	            
-			  	    ]
-		  		  })
-
-	        
-	        
-	        
-	    ]
+          div({
+            classes: ['two-column-task-info', 'task-info'],
+            children: [
+              paragraph({
+                classes: ['task-info-key'],
+                text: 'Done'
+              }),
+              progressBar({
+                id: 'task-progress-done',
+                value: model.project.percentMapped,
+                text: model.project.percentMapped+'%'
+              }),
+              paragraph({
+                text: model.project.percentMapped+'%'
+              })
+            ]
+          }),
+          div({
+            classes: ['two-column-task-info','task-info'],
+            children: [
+              paragraph({
+                classes: ['task-info-key'],
+                text: 'Validated'
+              }),
+              progressBar({
+                id: 'task-progress-validated',
+                value: model.project.percentValidated,
+                text: model.project.percentValidated+'%'
+              }),
+              paragraph({
+                text: model.project.percentValidated+'%'
+              })
+            ]
+          })
+        ]
       })
     ]
   });
