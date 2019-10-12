@@ -4,6 +4,7 @@ import '../styles/layout.css';
 import { OVP_DE, OVP_RU, OVP_FR, DATETIME_FORMAT, HOTOSM_PROJECT_URL } from '../Variables';
 import h from 'snabbdom/h';
 
+
 import { init } from 'snabbdom';
 const patch = init([
   require('snabbdom/modules/class').default,
@@ -17,7 +18,7 @@ const patch = init([
 import { inputCheckbox, inputNumber, inputText, form, select, option, div, paragraph, progressBar, a } from './basic';
 
 import { createFeatureChart, createStatusChart } from './chart';
-import { createBoard } from './board';
+import { createBoardTasks, createBoardBuildings, createBoardValidators } from './board';
 
 
 export default function dashboard(model) {
@@ -144,34 +145,35 @@ export default function dashboard(model) {
           	      'Last update'),
 
                 div({
-                    classes: ['task-sub-section', 'five-column-task-sub-section', 'task-loading'],
+                    classes: ['task-sub-section', 'three-column-task-sub-section', 'task-loading'],
                     children: [
                         div({
                             children: [
-                                h('h4', {}, 'Board1'),
+                                h('h4', {}, 'Mappers by buildings'),
                             ]
                         }),
-                        paragraph({
-                            text: 'Loading'
-                        }),
-                        div({}),
-                        div({
-                            classes: ['loader-ring'],
-                            children: [
-                                div({}),
-                                div({}),
-                                div({}),
-                                div({})
-                            ]
+                        
+                        h('div', { 
+                            attrs: {
+                                id: 'board1'
+                            },
+                            hook: {
+                                update: (vnode) => {
+                                	var x = createBoardBuildings(model);
+                                	if (x) {
+                                		patch(vnode.elm, x);
+                                	}
+                                }
+                            }
                         })
                     ]
                 }),
                 div({
-                    classes: ['task-sub-section', 'five-column-task-sub-section', 'task-loading'],
+                    classes: ['task-sub-section', 'three-column-task-sub-section', 'task-loading'],
                     children: [
                         div({
                             children: [
-                                h('h4', {}, 'Board2'),
+                                h('h4', {}, 'Mappers by tasks'),
                             ]
                         }),
                         
@@ -181,18 +183,17 @@ export default function dashboard(model) {
                             },
                             hook: {
                                 update: (vnode) => {
-                                	var x = createBoard(model);
+                                	var x = createBoardTasks(model);
                                 	if (x) {
-                                		patch(vnode, x);
-                                		console.log('aaaaa');
+                                		patch(vnode.elm, x);
                                 	}
                                 }
                             }
                         })
                     ]
                 }),
-                div({
-                    classes: ['task-sub-section', 'five-column-task-sub-section', 'task-loading'],
+/*                div({
+                    classes: ['task-sub-section', 'three-column-task-sub-section', 'task-loading'],
                     children: [
                         div({
                             children: [
@@ -213,51 +214,28 @@ export default function dashboard(model) {
                             ]
                         })
                     ]
-                }),
+                }),*/
                 div({
-                    classes: ['task-sub-section', 'five-column-task-sub-section', 'task-loading'],
+                    classes: ['task-sub-section', 'three-column-task-sub-section', 'task-loading'],
                     children: [
                         div({
                             children: [
-                                h('h4', {}, 'Board4'),
+                                h('h4', {}, 'Validators per tasks'),
                             ]
                         }),
-                        paragraph({
-                            text: 'Loading'
-                        }),
-                        div({}),
-                        div({
-                            classes: ['loader-ring'],
-                            children: [
-                                div({}),
-                                div({}),
-                                div({}),
-                                div({})
- 
-                                ]
-                        })
-                    ]
-                }),
-                div({
-                    classes: ['task-sub-section', 'five-column-task-sub-section', 'task-loading'],
-                    children: [
-                        div({
-                            children: [
-                                h('h4', {}, 'Board5'),
-                            ]
-                        }),
-                        paragraph({
-                            text: 'Loading'
-                        }),
-                        div({}),
-                        div({
-                            classes: ['loader-ring'],
-                            children: [
-                                div({}),
-                                div({}),
-                                div({}),
-                                div({})
-                            ]
+                        
+                        h('div', { 
+                            attrs: {
+                                id: 'board5'
+                            },
+                            hook: {
+                                update: (vnode) => {
+                                	var x = createBoardValidators(model);
+                                	if (x) {
+                                		patch(vnode.elm, x);
+                                	}
+                                }
+                            }
                         })
                     ]
                 }),
