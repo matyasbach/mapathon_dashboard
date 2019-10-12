@@ -2,6 +2,7 @@
 
 import h from 'snabbdom/h';
 import { header, searchBar, taskHeader, taskData, taskLeaderboard, taskProgress, showError } from './layout';
+import dashboard from './dashboard';
 import { getProjectData, getBBox, getChangesets, getOSMBuildings, refreshData  } from '../Ajax';
 
 import 'leaflet/dist/leaflet.css';
@@ -23,13 +24,13 @@ export default function App(model) {
       model.loadingMessage = "Retrieving project modifications...";
       getChangesets(model.bbox, model.startDateTime, model.endDateTime, model.project.id);
     }
-
+    
     if(model.changesets && !model.OSMData) {
       model.loadingMessage = "Retrieving project features (building, landuse, highway and waterway)...";
       getOSMBuildings(model.bbox, model.startDateTime, model.endDateTime, model.server, model.changesets);
     }
 
-    if(model.OSMData && !model.timeoutId) {
+    if(!model.dashboard && model.OSMData && !model.timeoutId) {
       refreshData(model.bbox, model.startDateTime, model.endDateTime, model.project.id, model.server);
     }
   }
@@ -41,7 +42,16 @@ export default function App(model) {
 function createLayout(model)
 {
   var layout = null;
-  if(model.OSMData){
+  if(model.dashboard) {
+    layout = h('div#app', [
+      header(),
+      searchBar(model),
+      h('div#task', [
+        dashboard(model.dashboard)
+      ])
+    ]);
+  }
+  else if(model.OSMData){
     layout = h('div#app', [
       header(),
       searchBar(model),

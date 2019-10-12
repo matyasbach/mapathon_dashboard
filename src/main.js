@@ -5,6 +5,7 @@ import { init } from 'snabbdom';
 import h from 'snabbdom/h';
 import PubSub from './PubSub';
 import App from './components/App';
+import { reduceState as reduceDashboardState } from './Dashboard';
 
 const patch = init([
   require('snabbdom/modules/class').default,
@@ -25,7 +26,8 @@ const initialState = {
   OSMData: null,
   leaderboard: null,
   timeoutId: null,
-  calculations: null
+  calculations: null,
+  dashboard: null
 };
 
 function reduce(state, action) {
@@ -109,9 +111,18 @@ function reduce(state, action) {
 }
 
 function main(initState, initVnode, App) {
-
-  const update = function(msg, action) {
+  const updateState = function(msg, action) {
     state = reduce(state, action);
+    update();
+  }
+
+  const updateDashboardState = function(msg, action) {
+    state.dashboard = reduceDashboardState(state.dashboard, action);
+    update();
+  }
+
+  const update = function() {
+    console.log(state);
     newVnode = App(state);
     patch(oldVnode, newVnode);
     oldVnode = newVnode;
@@ -119,8 +130,10 @@ function main(initState, initVnode, App) {
 
   let newVnode = null, oldVnode = initVnode, state = initState;
 
-  PubSub.subscribe('ACTIONS', update);
+  PubSub.subscribe('ACTIONS', updateState);
   PubSub.publish('ACTIONS', { type: 'START' });
+
+  PubSub.subscribe('DASHBOARD_ACTIONS', updateDashboardState);
 }
 
 main(initialState, document.querySelector('#root'), App);

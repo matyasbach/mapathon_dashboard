@@ -33,6 +33,6 @@ export function submitDashboard(ev) {
     endDateTime: moment(ev.target.parentElement[2].value, DATETIME_FORMAT),
     server: ev.target.parentElement[3].value
   };
-  PubSub.publish('ACTIONS', getOSMData(params));
+  PubSub.publish('DASHBOARD_ACTIONS', getOSMData(params));
   return false;
 }
