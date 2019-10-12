@@ -29,4 +29,12 @@ function publish(message, data) {
   }
 }
 
-export default { publish, subscribe };
+
+function clearSubscriptions(message) {
+	
+	messages[message] = {};
+	
+}
+
+
+export default { publish, subscribe, clearSubscriptions };
