@@ -3,8 +3,9 @@
 import Chart from 'chart.js';
 
 export default function createFeatureChart (model) {
-	if(!model.charts || !model.charts.building) return null; // TODO: show loading
-	console.log(model.charts.building);
+	const { charts } = model.dashboard;
+	if(!charts || !charts.building) return null; // TODO: show loading
+	console.log(charts.building);
 	
 	var ctx = document.getElementById('featureChart');
 	var myChart = new Chart(ctx, {
@@ -12,7 +13,7 @@ export default function createFeatureChart (model) {
 	    data: { datasets: [
 			{
 		        label: "buildings",
-		        data: model.charts.building,
+		        data: charts.building,
 			    fill: false,
 			    borderColor: 'red',
 			    steppedLine: 'before'			    	

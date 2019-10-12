@@ -9,7 +9,6 @@ import { HOTOSM_API_URL, OSM_API_URL, OVP_DE } from './Variables';
 import { BAD_REQUEST, CONNECTION_TIMEOUT, INVALID_PROJECT_ID, TOO_MANY_REQUESTS, UNKNOWN_ERROR } from './Errors';
 import { computeLeaderboard } from './Leaderboard';
 import { sumLines, sumAreas } from './Calculations';
-import { getAccumulatedFeatures } from './Charts';
 
 const requests = [];
 
@@ -184,16 +183,9 @@ function lengthAndAreaCalculations(OSMData)
   const calculations = {};
   calculations.roadLength = sumLines(OSMData['highway']['features']);
   calculations.waterwayLength = sumLines(OSMData['waterway']['features']);
-    calculations.residentialLanduse = sumAreas(OSMData['landuse']['features'], true);
-    calculations.totalLanduse = sumAreas(OSMData['landuse']['features'], false);
+  calculations.residentialLanduse = sumAreas(OSMData['landuse']['features'], true);
+  calculations.totalLanduse = sumAreas(OSMData['landuse']['features'], false);
   return calculations;
-};
-
-function getCharts(startDateTime, endDateTime, OSMData) {
-  const charts = {};
-  if (OSMData.building) charts.building = getAccumulatedFeatures(startDateTime, endDateTime, OSMData.building.features);
-
-  return charts;
 };
 
 export function getOSMBuildings(bbox, startDateTime, endDateTime, server, changesets) {
@@ -203,7 +195,6 @@ export function getOSMBuildings(bbox, startDateTime, endDateTime, server, change
     data.OSMData = OSMData;
     data.leaderboard = computeLeaderboard(data.OSMData);
     data.calculations = lengthAndAreaCalculations(data.OSMData);
-    data.charts = getCharts(startDateTime, endDateTime, OSMData);
     PubSub.publish('ACTIONS', setOsmDataAndLeaderboard(data));
   };
   getOSMBuildingsWithCallback(bbox, startDateTime, endDateTime, server, changesets, publishCallback);
@@ -220,7 +211,6 @@ export function refreshData(bbox, startDateTime, endDateTime, projectId, server)
       data.OSMData = OSMData;
       data.leaderboard = computeLeaderboard(data.OSMData);
       data.calculations = lengthAndAreaCalculations(data.OSMData);
-      data.charts = getCharts(startDateTime, endDateTime, OSMData);
       PubSub.publish('ACTIONS', updateChangesetsAndOsmData(data));
     };
     getOSMBuildingsWithCallback(bbox, startDateTime, endDateTime, server, changesets, updateCallback);

@@ -95,7 +95,6 @@ export function reduce(state, action) {
       state.OSMData = action.payload.OSMData;
       state.leaderboard = action.payload.leaderboard;
       state.calculations = action.payload.calculations;
-      state.charts = action.payload.charts;
       state.loadingMessage = null;
       state.lastUpdateTime = moment();
       state.timeoutId = window.setTimeout(dataUpdate, state.delay);
@@ -105,7 +104,6 @@ export function reduce(state, action) {
       state.OSMData = action.payload.OSMData;
       state.leaderboard = action.payload.leaderboard;
       state.calculations = action.payload.calculations;
-      state.charts = action.payload.charts;
       state.lastUpdateTime = moment();
       state.timeoutId = window.setTimeout(dataUpdate, state.delay);
       return state;

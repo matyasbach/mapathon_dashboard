@@ -2,21 +2,28 @@
 
 import moment from 'moment';
 import PubSub from './PubSub';
+import { getAccumulatedFeatures } from './Charts';
+
+function getCharts(startDateTime, endDateTime, OSMData) {
+  const charts = {};
+  if (OSMData.building) charts.building = getAccumulatedFeatures(startDateTime, endDateTime, OSMData.building.features);
+
+  return charts;
+};
 
 export function reduceState(state, action) {
   function reset(state) {
     return state;
   }
-
+  
   state = reset(state);
+  if (!state.dashboard) state.dashboard = {};
 
   const dataUpdate = function()
   {
     state.timeoutId = null;
     PubSub.publish('ACTIONS', state);
   };
-
-  state.dashboard = { charts: { building: [] } };
 
   switch (action.type) {
     case 'SET_ERROR':
@@ -65,7 +72,7 @@ export function reduceState(state, action) {
       state.OSMData = action.payload.OSMData;
       state.leaderboard = action.payload.leaderboard;
       state.calculations = action.payload.calculations;
-      state.charts = action.payload.charts;
+      state.dashboard.charts = getCharts(state.startDateTime, state.endDateTime, state.OSMData);
       state.loadingMessage = null;
       state.lastUpdateTime = moment();
       state.timeoutId = window.setTimeout(dataUpdate, state.delay);
@@ -75,7 +82,7 @@ export function reduceState(state, action) {
       state.OSMData = action.payload.OSMData;
       state.leaderboard = action.payload.leaderboard;
       state.calculations = action.payload.calculations;
-      state.charts = action.payload.charts;
+      state.dashboard.charts = getCharts(state.startDateTime, state.endDateTime, state.OSMData);
       state.lastUpdateTime = moment();
       state.timeoutId = window.setTimeout(dataUpdate, state.delay);
       return state;
