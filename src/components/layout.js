@@ -10,6 +10,8 @@ import { submitSearchForm } from '../UserEvents';
 import { destroyHighwayMap, displayHighwayMap, updateHighwayMap } from './highwayMap';
 import { destroyOverviewMap, displayOverviewMap, onCheckboxClicked, updateOverviewMap } from './overviewMap';
 
+import createFeatureChart from './chart';
+
 
 export function header() {
   return h('header', [
@@ -72,6 +74,9 @@ export function searchBar(model) {
     return valueToReturn;
   };
 
+  
+  //model.startDateTime.format(DATETIME_FORMAT)
+  model.endDateTime.format(DATETIME_FORMAT)
   return form({
     id: 'search-bar-form',
     submit: true,
@@ -82,21 +87,22 @@ export function searchBar(model) {
         type: 'number',
         name: 'projectID',
         label: 'Project ID',
-        min: 0
+        min: 0,
+        value: 6959
       }),
       inputText({
         id: 'start-date-input',
         type: 'text',
         name: 'startDate',
         label: 'Start ('+getUTCOffsetFromMoment(model.startDateTime)+')',
-        value: model.startDateTime.format(DATETIME_FORMAT)
+        value: '11/10/2019 20:00'
       }),
       inputText({
         id: 'end-date-input',
         type: 'text',
         name: 'endDate',
         label: 'End ('+getUTCOffsetFromMoment(model.endDateTime)+')',
-        value: model.endDateTime.format(DATETIME_FORMAT)
+        value: '11/10/2019 20:05'
       }),
       select({
         id: 'server-select',
@@ -121,6 +127,7 @@ export function searchBar(model) {
 
 export function taskHeader(model)
 {
+	
   return div({
     classes: ['task-box'],
     children: [
@@ -141,41 +148,105 @@ export function taskHeader(model)
       div({
         classes: ['task-grid'],
         children: [
-          div({
-            classes: ['two-column-task-info', 'task-info'],
-            children: [
-              paragraph({
-                classes: ['task-info-key'],
-                text: 'Done'
-              }),
-              progressBar({
-                id: 'task-progress-done',
-                value: model.project.percentMapped,
-                text: model.project.percentMapped+'%'
-              }),
-              paragraph({
-                text: model.project.percentMapped+'%'
-              })
-            ]
-          }),
-          div({
-            classes: ['two-column-task-info','task-info'],
-            children: [
-              paragraph({
-                classes: ['task-info-key'],
-                text: 'Validated'
-              }),
-              progressBar({
-                id: 'task-progress-validated',
-                value: model.project.percentValidated,
-                text: model.project.percentValidated+'%'
-              }),
-              paragraph({
-                text: model.project.percentValidated+'%'
-              })
-            ]
-          })
-        ]
+
+  	      div({
+	  	        classes: ['task-sub-section', 'three-column-task-sub-section'],
+	  	        children: [
+	  	          div({
+	  	            id: '',
+	  	            children: [
+	  	            	h('h4', {}, 'Progress'),
+	  	            ]
+	  	          }),
+	  	          div({
+		  	            id: '',
+		  	            children: [
+			              paragraph({
+			                  classes: ['task-info-key'],
+			                  text: 'Done'
+			                }),
+		                  progressBar({
+			                  id: 'task-progress-done',
+			                  value: model.project.percentMapped,
+			                  text: model.project.percentMapped+'%'
+			                }),
+			              paragraph({
+			                  text: model.project.percentMapped+'%'
+			                })
+			            ]
+	  	          }),
+	  	          div({
+		  	            id: '',
+		  	            children: [
+	                
+			              paragraph({
+			                    classes: ['task-info-key'],
+			                    text: 'Validated'
+			                  }),
+			              progressBar({
+			                    id: 'task-progress-validated',
+			                    value: model.project.percentValidated,
+			                    text: model.project.percentValidated+'%'
+			                  }),
+			                  paragraph({
+			                    text: model.project.percentValidated+'%'
+			                  })
+			  	        ]
+	  	          })
+	  	         ]
+	  		  }),
+        	        	
+	      div({
+	  	        classes: ['task-sub-section', 'three-column-task-sub-section'],
+	  	        children: [
+	    
+	  	          div({
+	  	            id: '',
+	  	            children: [
+	  	            	h('h4', {}, 'Progress'),
+	  	            ]
+	  	          }),
+	              div({
+	                  classes: ['task-info-key'],
+	                  children: [
+	                	  h('canvas', {attrs: {id:'featureChart', width: 300, height: 200},
+	                		  hook: {
+	                			  insert: (vnode) => { createFeatureChart(model); }
+	                		  }
+	                	  })
+	                  ]
+	                })
+	            ]
+	            
+	        }),
+	        
+	  	      div({
+		  	        classes: ['task-sub-section', 'three-column-task-sub-section'],
+		  	        children: [
+		  	          div({
+		  	            id: '',
+		  	            children: [
+		  	            	h('h4', {}, 'Totals'),
+		  	            ]
+		  	          }),
+
+			          div({
+				            children:[
+				            	h('p', {attrs: {class: 'task-info-key'}}, model.OSMData['highway']['features'].length + ' road(s) created (' + model.calculations.roadLength + ' km)')
+				            ]
+				          }),
+				          div({
+				            children:[
+				            	h('p', {attrs: {class: 'task-info-key'}}, model.OSMData['building']['features'].length + ' building(s) created')				            ]
+				          })
+			  	            
+			  	    ]
+		  		  })
+
+	        
+	        
+	        
+	    ]
       })
     ]
   });
@@ -183,190 +254,189 @@ export function taskHeader(model)
 
 export function taskData(model)
 {
-  //
   model.checkboxNames = {};
   model.checkboxNames.roads = 'highway';
   model.checkboxNames.buildings = 'building';
   model.checkboxNames.landuse = 'landuse';
-  model.checkboxNames.waterways = 'waterway';
-
+  model.checkboxNames.waterways = 'waterway';  
+  
   return div({
-    classes: ['task-box'],
-    children: [
-      h('h2',
-      {
-        hook:
-        {
-          update: (oldVnode, vnode) =>
-          {
-            vnode.text = 'Last update (' + model.lastUpdateTime.format("HH:mm:ss") + ')';
-          }
-        }
-      },
-      'Last update (' + model.lastUpdateTime.format("HH:mm:ss") + ')'),
-      div({
-        classes: ['task-sub-section','three-column-task-sub-section'],
-        children:[
-          h('h4', {}, 'Map'),
-          h('div#overview-map',
-          {
-            hook:
-            {
-              insert: (vnode) =>
-              {
-                displayOverviewMap(model);
-              },
-              update: (oldVnode, vnode) =>
-              {
-                updateOverviewMap(model.OSMData);
-              },
-              destroy: (vnode) =>
-              {
-                destroyOverviewMap();
-              }
-            }
-          })
-        ]
-      }),
-      div({
-        classes: ['task-sub-section','three-column-task-sub-section'],
-        children: [
-          div({
-            id: 'roads',
-            children: [
-              h('h4', {}, 'Roads'),
-              inputCheckbox({
-                id: 'roads-checkbox',
-                name: model.checkboxNames.roads,
-                label: 'Display roads on the map',
-                value: 'roadsChecked',
-                on:
-                {
-                  click: onCheckboxClicked
-                }
-              })
-            ]
-          }),
-          h('p', {}, model.OSMData['highway']['features'].length
-            + ' road(s) created ('
-            + model.calculations.roadLength + ' km)'),
-          h('div#highway-map',
-          {
-            hook:
-            {
-              insert: (vnode) =>
-              {
-                const startLongitude = 5.9215,
-                  startLatitude = 45.58789;
-                // Check if we can access the geolocation API
-                if ("geolocation" in navigator) {
-                  navigator.geolocation.getCurrentPosition(function onSuccess(position) {
-                    vnode.map = displayHighwayMap(model.calculations.roadLength, position.coords.latitude, position.coords.longitude);
-                  }, function onError(positionError)
-                  {
-                    displayHighwayMap(model.calculations.roadLength, startLatitude, startLongitude);
-                  });
-                }
-                else
-                {
-                  displayHighwayMap(model.calculations.roadLength, startLatitude, startLongitude);
-                }
-              },
-              update: (oldVnode, vnode) =>
-              {
-                updateHighwayMap(model.calculations.roadLength);
-              },
-              destroy: (vnode) =>
-              {
-                destroyHighwayMap();
-              }
-            }
-          })
-        ]
-      }),
-      div({
-        classes: ['task-sub-section', 'three-column-task-sub-section'],
-        children: [
-          div({
-            id: 'buildings',
-            children: [
-              h('h4', {}, 'Buildings'),
-              inputCheckbox({
-                id: 'buildings-checkbox',
-                name: model.checkboxNames.buildings,
-                label: 'Display buildings on the map',
-                value: 'buildingsChecked',
-                on:
-                {
-                  click: onCheckboxClicked
-                }
-              })
-            ]
-          }),
-          h('p', {}, model.OSMData['building']['features'].length + ' building(s) created')
-        ]
-      }),
-      div({
-        classes: ['task-sub-section', 'three-column-task-sub-section'],
-        children: [
-          div({
-            id: 'landuse',
-            children: [
-              h('h4', {}, 'Landuse'),
-              inputCheckbox({
-                id: 'landuse-checkbox',
-                name: model.checkboxNames.landuse,
-                label: 'Display landuse on the map',
-                value: 'landuseChecked',
-                on:
-                {
-                  click: onCheckboxClicked
-                }
-              })
-            ]
-          }),
-          div({
-            children:[
-              h('b', {}, 'Residential landuse: '),
-              h('span', {}, model.calculations.residentialLanduse + ' km²')
-            ]
-          }),
-          div({
-            children:[
-              h('b', {}, 'Total landuse: '),
-              h('span', {}, model.calculations.totalLanduse + ' km²')
-            ]
-          })
-        ]
-      }),
-      div({
-        classes: ['task-sub-section', 'three-column-task-sub-section'],
-        children: [
-          div({
-            id: 'waterways',
-            children: [
-            h('h4', {}, 'Waterways'),
-              inputCheckbox({
-                id: 'waterways-checkbox',
-                name: model.checkboxNames.waterways,
-                label: 'Display waterways on the map',
-                value: 'waterwaysChecked',
-                on:
-                {
-                  click: onCheckboxClicked
-                }
-              })
-            ]
-          }),
-          h('p', {}, model.OSMData['waterway']['features'].length
-              + ' waterway(s) created ('
-              + model.calculations.waterwayLength + ' km)')
-        ]
-      }),
-      h('p.white', {},'.')
-    ]
-  });
-};
+	    classes: ['task-box'],
+	    children: [
+	      h('h2',
+	      {
+	        hook:
+	        {
+	          update: (oldVnode, vnode) =>
+	          {
+	            vnode.text = 'Last update (' + model.lastUpdateTime.format("HH:mm:ss") + ')';
+	          }
+	        }
+	      },
+	      'Last update (' + model.lastUpdateTime.format("HH:mm:ss") + ')'),
+	      div({
+	        classes: ['task-sub-section','three-column-task-sub-section'],
+	        children:[
+	          h('h4', {}, 'Map'),
+	          h('div#overview-map',
+	          {
+	            hook:
+	            {
+	              insert: (vnode) =>
+	              {
+	                displayOverviewMap(model);
+	              },
+	              update: (oldVnode, vnode) =>
+	              {
+	                updateOverviewMap(model.OSMData);
+	              },
+	              destroy: (vnode) =>
+	              {
+	                destroyOverviewMap();
+	              }
+	            }
+	          })
+	        ]
+	      }),
+	      div({
+	        classes: ['task-sub-section','three-column-task-sub-section'],
+	        children: [
+	          div({
+	            id: 'roads',
+	            children: [
+	              h('h4', {}, 'Roads'),
+	              inputCheckbox({
+	                id: 'roads-checkbox',
+	                name: model.checkboxNames.roads,
+	                label: 'Display roads on the map',
+	                value: 'roadsChecked',
+	                on:
+	                {
+	                  click: onCheckboxClicked
+	                }
+	              })
+	            ]
+	          }),
+	          h('p', {}, model.OSMData['highway']['features'].length
+	            + ' road(s) created ('
+	            + model.calculations.roadLength + ' km)'),
+	          h('div#highway-map',
+	          {
+	            hook:
+	            {
+	              insert: (vnode) =>
+	              {
+	                const startLongitude = 5.9215,
+	                  startLatitude = 45.58789;
+	                // Check if we can access the geolocation API
+	                if ("geolocation" in navigator) {
+	                  navigator.geolocation.getCurrentPosition(function onSuccess(position) {
+	                    vnode.map = displayHighwayMap(model.calculations.roadLength, position.coords.latitude, position.coords.longitude);
+	                  }, function onError(positionError)
+	                  {
+	                    displayHighwayMap(model.calculations.roadLength, startLatitude, startLongitude);
+	                  });
+	                }
+	                else
+	                {
+	                  displayHighwayMap(model.calculations.roadLength, startLatitude, startLongitude);
+	                }
+	              },
+	              update: (oldVnode, vnode) =>
+	              {
+	                updateHighwayMap(model.calculations.roadLength);
+	              },
+	              destroy: (vnode) =>
+	              {
+	                destroyHighwayMap();
+	              }
+	            }
+	          })
+	        ]
+	      }),
+	      div({
+	        classes: ['task-sub-section', 'three-column-task-sub-section'],
+	        children: [
+	          div({
+	            id: 'buildings',
+	            children: [
+	              h('h4', {}, 'Buildings'),
+	              inputCheckbox({
+	                id: 'buildings-checkbox',
+	                name: model.checkboxNames.buildings,
+	                label: 'Display buildings on the map',
+	                value: 'buildingsChecked',
+	                on:
+	                {
+	                  click: onCheckboxClicked
+	                }
+	              })
+	            ]
+	          }),
+	          h('p', {}, model.OSMData['building']['features'].length + ' building(s) created')
+	        ]
+	      }),
+	      div({
+	        classes: ['task-sub-section', 'three-column-task-sub-section'],
+	        children: [
+	          div({
+	            id: 'landuse',
+	            children: [
+	              h('h4', {}, 'Landuse'),
+	              inputCheckbox({
+	                id: 'landuse-checkbox',
+	                name: model.checkboxNames.landuse,
+	                label: 'Display landuse on the map',
+	                value: 'landuseChecked',
+	                on:
+	                {
+	                  click: onCheckboxClicked
+	                }
+	              })
+	            ]
+	          }),
+	          div({
+	            children:[
+	              h('b', {}, 'Residential landuse: '),
+	              h('span', {}, model.calculations.residentialLanduse + ' km²')
+	            ]
+	          }),
+	          div({
+	            children:[
+	              h('b', {}, 'Total landuse: '),
+	              h('span', {}, model.calculations.totalLanduse + ' km²')
+	            ]
+	          })
+	        ]
+	      }),
+	      div({
+	        classes: ['task-sub-section', 'three-column-task-sub-section'],
+	        children: [
+	          div({
+	            id: 'waterways',
+	            children: [
+	            h('h4', {}, 'Waterways'),
+	              inputCheckbox({
+	                id: 'waterways-checkbox',
+	                name: model.checkboxNames.waterways,
+	                label: 'Display waterways on the map',
+	                value: 'waterwaysChecked',
+	                on:
+	                {
+	                  click: onCheckboxClicked
+	                }
+	              })
+	            ]
+	          }),
+	          h('p', {}, model.OSMData['waterway']['features'].length
+	              + ' waterway(s) created ('
+	              + model.calculations.waterwayLength + ' km)')
+	        ]
+	      }),
+	      h('p.white', {},'.')
+	    ]
+	  });
+}
 
 function listLeader(rank, unity){
   const max_length = Math.min(25, rank.length);
