@@ -159,20 +159,28 @@ export function select(model) {
 };
 
 export function form(model) {
+  
   const sel = selector('form', model.id, model.classes);
-  const evs = events({
-    event: 'submit',
-    func: model.onsubmit
-  })
 
   if(model.submit) {
     const submit = inputSubmit({
-      value: model.submitText || 'Submit'
+      value: model.submitText || 'Report',
+      id: 'submitReport',
+      on:{'click': model.submitReport }
     });
     model.children.push(submit);
   }
 
-  return h(sel, { on: evs }, model.children);
+  if(model.submit) {
+	    const submit = inputSubmit({
+	      value: model.submitTextDashboard || 'Dashboard',
+	      id: 'submitDashboard',
+	      on:{'click': model.submitDashboard }
+	});
+	model.children.push(submit);
+  }
+  
+  return h(sel, {}, model.children);
 };
 
 export function div(model) {

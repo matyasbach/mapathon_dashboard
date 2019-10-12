@@ -43,6 +43,11 @@ form#search-bar-form div,
   display: inline-block;
 }
 
+svg {
+	background-color: lime;	
+	
+}
+
 form#search-bar-form input,
 form#search-bar-form select {
   width: 16rem;
@@ -72,9 +77,14 @@ form#search-bar-form label,
   display: inline-block;
 }
 
-form#search-bar-form input[type="submit"] {
+form#search-bar-form input#submitReport {
   padding: 0 16px;
-  width: 8rem;
+  width: 9rem;
+}
+
+form#search-bar-form input#submitDashboard {
+  padding: 0 16px;
+  width: 12rem;
 }
 
 .task-box {

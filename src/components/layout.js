@@ -5,7 +5,7 @@ import h from 'snabbdom/h';
 import { OVP_DE, OVP_RU, OVP_FR, DATETIME_FORMAT, HOTOSM_PROJECT_URL } from '../Variables';
 import { inputCheckbox, inputNumber, inputText, form, select, option, div, paragraph, progressBar, a } from './basic';
 import { headerImageLink } from './custom';
-import { submitSearchForm } from '../UserEvents';
+import { submitReport, submitDashboard } from '../UserEvents';
 
 import { destroyHighwayMap, displayHighwayMap, updateHighwayMap } from './highwayMap';
 import { destroyOverviewMap, displayOverviewMap, onCheckboxClicked, updateOverviewMap } from './overviewMap';
@@ -80,7 +80,8 @@ export function searchBar(model) {
   return form({
     id: 'search-bar-form',
     submit: true,
-    onsubmit: submitSearchForm,
+    submitReport: submitReport,
+    submitDashboard: submitDashboard,
     children: [
       inputNumber({
         id: 'project-id-input',
