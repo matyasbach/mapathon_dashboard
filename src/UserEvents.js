@@ -15,6 +15,8 @@ export function submitReport(ev) {
     endDateTime: moment(ev.target.parentElement[2].value, DATETIME_FORMAT),
     server: ev.target.parentElement[3].value
   };
+  PubSub.clearSubscriptions('DASHBOARD_ACTIONS');
+  PubSub.clearSubscriptions('ACTIONS');
   PubSub.publish('ACTIONS', getOSMData(params));
   return false;
 }
@@ -29,6 +31,8 @@ export function submitDashboard(ev) {
     endDateTime: moment(ev.target.parentElement[2].value, DATETIME_FORMAT),
     server: ev.target.parentElement[3].value
   };
+  PubSub.clearSubscriptions('DASHBOARD_ACTIONS');
+  PubSub.clearSubscriptions('ACTIONS');
   PubSub.publish('DASHBOARD_ACTIONS', getOSMData(params));
   return false;
 }
