@@ -143,6 +143,20 @@ div.task-grid {
   width: calc(50% - 32px);
 }
 
+.emerging-picture{
+  width: calc(76% - 64px);
+  float:left;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+  margin: 16px;
+}
+
+.five-column-task-sub-section {
+  width: calc(20% - 64px);
+  float:left;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+  margin: 16px;
+}
+
 .three-column-task-sub-section {
   width: calc(33.33% - 64px);
   float:left;
