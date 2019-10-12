@@ -43,11 +43,6 @@ form#search-bar-form div,
   display: inline-block;
 }
 
-svg {
-	background-color: lime;	
-	
-}
-
 form#search-bar-form input,
 form#search-bar-form select {
   width: 16rem;
