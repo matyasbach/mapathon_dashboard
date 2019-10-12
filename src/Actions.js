@@ -14,6 +14,14 @@ export function setProjectData(projectData) {
   }
 };
 
+export function setProjectContributions(contributionsData) {
+	  return {
+	    type: 'SET_CONTRIBUTIONS_DATA',
+	    payload: contributionsData
+	  }
+	};
+
+
 export function setBBox(bbox) {
   return {
     type: 'SET_BBOX',
