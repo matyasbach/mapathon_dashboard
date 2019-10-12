@@ -119,7 +119,7 @@ export function updateState(msg, action) {
 }
 
 export function updateDashboardState(msg, action) {
-  state.dashboard = reduceDashboardState(state.dashboard, action);
+  state = reduceDashboardState(state, action);
   update();
 }
 

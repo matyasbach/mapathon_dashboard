@@ -1,7 +1,7 @@
 'use strict';
 
+import moment from 'moment';
 import PubSub from './PubSub';
-import { reduce } from './main';
 
 export function reduceState(state, action) {
   function reset(state) {
@@ -15,6 +15,8 @@ export function reduceState(state, action) {
     state.timeoutId = null;
     PubSub.publish('ACTIONS', state);
   };
+
+  state.dashboard = { charts: { building: [] } };
 
   switch (action.type) {
     case 'SET_ERROR':
