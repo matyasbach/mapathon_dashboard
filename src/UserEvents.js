@@ -9,8 +9,6 @@ export function submitReport(ev) {
   ev.preventDefault();
   ev.stopPropagation();
   
-  console.log("AAAAAA");
-  
   const params = {
     projectId: ev.target.parentElement[0].value,
     startDateTime: moment(ev.target.parentElement[1].value, DATETIME_FORMAT),
@@ -24,8 +22,6 @@ export function submitReport(ev) {
 export function submitDashboard(ev) {
   ev.preventDefault();
   ev.stopPropagation();
-  
-  console.log("BBBBB");
   
   const params = {
     projectId: ev.target.parentElement[0].value,
