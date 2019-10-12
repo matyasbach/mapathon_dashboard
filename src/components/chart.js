@@ -3,7 +3,7 @@
 import Chart from 'chart.js';
 
 export default function createFeatureChart (model) {
-
+	if(!model.charts || !model.charts.building) return null; // TODO: show loading
 	console.log(model.charts.building);
 	
 	var ctx = document.getElementById('featureChart');

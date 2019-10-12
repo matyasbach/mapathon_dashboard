@@ -36,6 +36,7 @@ const initialState = {
 export function reduce(state, action) {
 
   function reset(state) {
+    state.dashboard = null;
     return state;
   }
 
