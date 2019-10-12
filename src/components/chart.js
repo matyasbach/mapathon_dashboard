@@ -1,3 +1,4 @@
+'use strict';
 
 import Chart from 'chart.js';
 
@@ -13,11 +14,20 @@ export default function createFeatureChart (model) {
 		        label: "buildings",
 		        data: model.charts.building,
 			    fill: false,
-			    borderColor: 'red'
+			    borderColor: 'red',
+			    steppedLine: 'before'			    	
 			}],
 		},
 	    options: {
-	        scales: {
+	        legend: {
+	            display: true,
+	            position: 'bottom',
+	            labels: {
+	                fontColor: 'black',
+	                fontSize: 12
+	            }
+	        },
+	    	scales: {
 	            yAxes: [{
 	                ticks: {
 	                    beginAtZero: true
