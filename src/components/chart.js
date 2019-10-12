@@ -3,9 +3,40 @@ import Chart from 'chart.js';
 
 export default function createFeatureChart (model) {
 
+	console.log(model.charts.building);
+	
 	var ctx = document.getElementById('featureChart');
 	var myChart = new Chart(ctx, {
-	    type: 'bar',
+	    type: 'line',
+	    data: { datasets: [
+			{
+		        label: "buildings",
+		        data: model.charts.building,
+			    fill: false,
+			    borderColor: 'red'
+			}],
+		},
+	    options: {
+	        scales: {
+	            yAxes: [{
+	                ticks: {
+	                    beginAtZero: true
+	                }
+	            }],
+	            xAxes: [{
+	                type: 'time',
+	                time: {
+	                    unit: 'minute'
+	                }
+	            }]	            
+	        }
+	    }
+	});
+
+	
+	/*
+	var myChart = new Chart(ctx, {
+	    type: 'line',
 	    data: {
 	        labels: ['AAA', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
 	        datasets: [{
@@ -40,5 +71,6 @@ export default function createFeatureChart (model) {
 	        }
 	    }
 	});
+	 */
 	
 }

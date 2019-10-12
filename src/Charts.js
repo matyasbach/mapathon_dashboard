@@ -4,22 +4,22 @@ import moment from "moment";
 
 export function getAccumulatedFeatures(startDateTime, endDateTime, features = []) {
 
-  let point = { timestamp: startDateTime, count: 0 };
-
+  let point = { t: startDateTime, y: 0 };
+  
   const chartData = features.reduce((chartData, feature) => {
     const { timestamp } = feature.properties;
-    if (point && point.timestamp == timestamp) {
-      point.count++;
+    if (point && point.t == timestamp) {
+      point.y++;
     }
     else {
-      point = { timestamp: timestamp, count: point && point.count + 1 || 1 };
+      point = { t: timestamp, y: point && point.y + 1 || 1 };
       chartData.push(point);
     }
     return chartData;
   }, [point]);
 
-  chartData.push({ timestamp: endDateTime, count: point.count });
-  chartData.forEach(item => item.timestamp = moment(item.timestamp).toISOString());
+  chartData.push({ t: endDateTime, y: point.y });
+  chartData.forEach(item => item.t = moment(item.t).toISOString());
 
   return chartData;
 }
