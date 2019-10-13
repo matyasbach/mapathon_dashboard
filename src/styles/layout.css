@@ -19,6 +19,10 @@ header img {
   width: auto;
 }
 
+div#featureChart { 
+  text-align: center;
+}
+
 img#cartong-logo {
   margin-top: 1rem;
   max-height: 3rem;

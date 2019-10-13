@@ -8,7 +8,7 @@ export function getOSMData(params) {
 };
 
 export function setProjectData(projectData) {
-  return {
+ return {
     type: 'SET_PROJECT_DATA',
     payload: projectData
   }

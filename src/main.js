@@ -123,7 +123,6 @@ export function updateDashboardState(msg, action) {
 }
 
 function update() {
-  console.log(state);
   const newNode = App(state);
   patch(node, newNode);
   node = newNode;

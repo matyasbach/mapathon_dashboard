@@ -88,13 +88,14 @@ export function reduceState(state, action) {
       return state;
     case 'SET_PROJECT_DATA':
       Object.assign(state.project, action.payload);
+      PubSub.publish("DATASOURCE_UPDATED_HOTOSM", state );
       return state;
     case 'SET_BBOX':
       state.bbox = action.payload;
       return state;
     case 'SET_CONTRIBUTIONS_DATA':
-      console.log("SET_CONTRIBUTIONS_DATA", action.payload.userContributions);
       updateUserStats(state.dashboard.userStats, null, action.payload.userContributions);
+      PubSub.publish("DATASOURCE_UPDATED_HOTOSM_CONTRIB", state );
       return state;
     case 'SET_CHANGESETS':
       state.changesets = action.payload;
@@ -108,6 +109,8 @@ export function reduceState(state, action) {
       state.lastUpdateTime = moment();
       state.timeoutId = window.setTimeout(dataUpdate, state.delay);
       updateUserStats(state.dashboard.userStats, state.OSMData);
+
+      PubSub.publish("DATASOURCE_UPDATED_OSM", state );
       return state;
     case 'UPDATE_CHANGESETS_AND_OSM_DATA':
       state.changesets = action.payload.changesets;
@@ -118,6 +121,8 @@ export function reduceState(state, action) {
       state.lastUpdateTime = moment();
       state.timeoutId = window.setTimeout(dataUpdate, state.delay);
       updateUserStats(state.dashboard.userStats, state.OSMData);
+
+      PubSub.publish("DATASOURCE_UPDATED_OSM", state );
       return state;
   }
 

@@ -2,12 +2,31 @@
 
 import Chart from 'chart.js';
 
-export function createFeatureChart (model) {
+import h from 'snabbdom/h';
+
+import { init } from 'snabbdom';
+const patch = init([
+  require('snabbdom/modules/class').default,
+  require('snabbdom/modules/eventlisteners').default,
+  require('snabbdom/modules/attributes').default,
+  require('snabbdom/modules/dataset').default,
+  require('snabbdom/modules/style').default
+]);
+
+
+
+export function createFeatureChart (msg, model) {
 	const { charts } = model.dashboard;
 	if(!charts || !charts.building) return null;
-	console.log(charts.building);
 	
 	var ctx = document.getElementById('featureChart');
+
+	if (ctx) {
+		patch(ctx, h('canvas', { attrs: { id: 'featureChartCanvas' } }));
+	}
+	
+	var ctx = document.getElementById('featureChartCanvas');
+	
 	var myChart = new Chart(ctx, {
 	    type: 'line',
 	    data: { datasets: [
@@ -55,12 +74,11 @@ function val(n) {
 
 
 
-export function createStatusChart (model) {
+export function createStatusChart (msg, model) {
 	
 	if(!model.project) return null;
 	
 	var ctx = document.getElementById('statusChart');
-	
 	
 	var mappedPct = val(model.project.percentMapped);
 	var validPct = val(model.project.percentValidated);

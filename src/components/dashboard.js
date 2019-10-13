@@ -4,7 +4,6 @@ import '../styles/layout.css';
 import { OVP_DE, OVP_RU, OVP_FR, DATETIME_FORMAT, HOTOSM_PROJECT_URL } from '../Variables';
 import h from 'snabbdom/h';
 
-
 import { init } from 'snabbdom';
 const patch = init([
   require('snabbdom/modules/class').default,
@@ -14,11 +13,14 @@ const patch = init([
   require('snabbdom/modules/style').default
 ]);
 
+var toVNode = require('snabbdom/tovnode').default;
+
 
 import { inputCheckbox, inputNumber, inputText, form, select, option, div, paragraph, progressBar, a } from './basic';
 
 import { createFeatureChart, createStatusChart } from './chart';
 import { createBoardTasks, createBoardBuildings, createBoardValidators } from './board';
+import PubSub from '../PubSub';
 
 
 export default function dashboard(model) {
@@ -71,20 +73,50 @@ export default function dashboard(model) {
                                 div({
                                     classes: ['task-info-key'],
                                     children: [
+	                                    h('div', {
+	                                        attrs: {
+	                                            id: 'featureChart'
+	                                        },
+	                                        hook: {
+	                                            insert: (vnode) => {
+	                                           		PubSub.subscribe("DATASOURCE_UPDATED_OSM", createFeatureChart); 
+	                                            }
+	                                        }
+	                                    },
+	                                    [
+	                                    	
+	                                        h('p.white', {}, '.'),
+	                                        div({}),
+	                                        h('p.white', {}, '.'),
+	                                        div({}),
+	                                        paragraph({
+	                                            text: 'Loading'
+	                                        }),
+	                                        div({}),
+	                                        div({
+	                                            classes: ['loader-ring'],
+	                                            children: [
+	                                                div({}),
+	                                                div({}),
+	                                                div({}),
+	                                                div({})
+	                                            ]
+	                                        })
+	                                    	
+	                                    ])
+                                	 ]
+/*                                    children: [
                                         h('canvas', {
                                             attrs: {
                                                 id: 'featureChart'
                                             },
                                             hook: {
                                                 insert: (vnode) => {
-                                                    createFeatureChart(model);
-                                                },
-                                                update: (vnode) => {
-                                                    createFeatureChart(model);
+                                               		PubSub.subscribe("DATASOURCE_UPDATED_OSM", createFeatureChart); 
                                                 }
                                             }
                                         })
-                                    ]
+                                    ]*/
                                 })
                             ]
 
@@ -109,12 +141,9 @@ export default function dashboard(model) {
                                                 id: 'statusChart'
                                             },
                                             hook: {
-                                                insert: (vnode) => {
-                                                    createStatusChart(model);
-                                                },
-                                                update: (vnode) => {
-                                                    createStatusChart(model);
-                                                }
+                                            	insert: (vnode) => { 
+                                            		PubSub.subscribe("DATASOURCE_UPDATED_HOTOSM", createStatusChart); 
+                                            	}
                                             }
                                         })
                                     ]
@@ -165,7 +194,24 @@ export default function dashboard(model) {
                                 	}
                                 }
                             }
-                        })
+                        },
+                        [
+                        	
+                            paragraph({
+                                text: 'Loading'
+                            }),
+                            div({}),
+                            div({
+                                classes: ['loader-ring'],
+                                children: [
+                                    div({}),
+                                    div({}),
+                                    div({}),
+                                    div({})
+                                ]
+                            })
+                        	
+                        ])
                     ]
                 }),
                 div({
@@ -182,39 +228,30 @@ export default function dashboard(model) {
                                 id: 'board2'
                             },
                             hook: {
-                                update: (vnode) => {
-                                	var x = createBoardTasks(model);
-                                	if (x) {
-                                		patch(vnode.elm, x);
-                                	}
-                                }
-                            }
-                        })
+                            	insert: (vnode) => { 
+                            		PubSub.subscribe("DATASOURCE_UPDATED_HOTOSM_CONTRIB", createBoardTasks); 
+                            	}
+                            }},
+                            [
+                            	
+                                paragraph({
+                                    text: 'Loading'
+                                }),
+                                div({}),
+                                div({
+                                    classes: ['loader-ring'],
+                                    children: [
+                                        div({}),
+                                        div({}),
+                                        div({}),
+                                        div({})
+                                    ]
+                                })
+                            	
+                            ]
+                        )
                     ]
                 }),
-/*                div({
-                    classes: ['task-sub-section', 'three-column-task-sub-section', 'task-loading'],
-                    children: [
-                        div({
-                            children: [
-                                h('h4', {}, 'Board3'),
-                            ]
-                        }),
-                        paragraph({
-                            text: 'Loading'
-                        }),
-                        div({}),
-                        div({
-                            classes: ['loader-ring'],
-                            children: [
-                                div({}),
-                                div({}),
-                                div({}),
-                                div({})
-                            ]
-                        })
-                    ]
-                }),*/
                 div({
                     classes: ['task-sub-section', 'three-column-task-sub-section', 'task-loading'],
                     children: [
@@ -236,7 +273,24 @@ export default function dashboard(model) {
                                 	}
                                 }
                             }
-                        })
+                        },
+                        [
+                        	
+                            paragraph({
+                                text: 'Loading'
+                            }),
+                            div({}),
+                            div({
+                                classes: ['loader-ring'],
+                                children: [
+                                    div({}),
+                                    div({}),
+                                    div({}),
+                                    div({})
+                                ]
+                            })
+                        	
+                        ])
                     ]
                 }),
 
