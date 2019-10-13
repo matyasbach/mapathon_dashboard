@@ -149,7 +149,7 @@ export default function dashboard(model) {
                     children: [
                         div({
                             children: [
-                                h('h4', {}, 'Mappers by buildings'),
+                                h('h4', {}, 'Mappers by buildings (selected period)'),
                             ]
                         }),
                         
@@ -220,7 +220,7 @@ export default function dashboard(model) {
                     children: [
                         div({
                             children: [
-                                h('h4', {}, 'Validators per tasks'),
+                                h('h4', {}, 'Validators by tasks'),
                             ]
                         }),
                         
