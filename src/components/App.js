@@ -8,13 +8,13 @@ import { getProjectData, getBBox, getChangesets, getOSMBuildings, refreshData, g
 import 'leaflet/dist/leaflet.css';
 
 export default function App(model) {
-  if(!model.errorMessage)
+  if(!model.errorMessage && !model.dashboard)
   {
     if(model.project && !model.project.name) {
       model.loadingMessage = "Retrieving project data...";
       getProjectData(model.project.id);
     }
-
+    
     if(model.project && model.project.name && !model.bbox) {
       model.loadingMessage = "Retrieving project bounding box...";
       getBBox(model.project.id);
@@ -22,7 +22,6 @@ export default function App(model) {
 
     if(model.bbox && !model.changesets) {
       model.loadingMessage = "Retrieving project modifications...";
-      if (model.dashboard) getProjectContributions(model.project.id);
       getChangesets(model.bbox, model.startDateTime, model.endDateTime, model.project.id);
     }
     
@@ -31,7 +30,7 @@ export default function App(model) {
       getOSMBuildings(model.bbox, model.startDateTime, model.endDateTime, model.server, model.changesets);
     }
 
-    if(!model.dashboard && model.OSMData && !model.timeoutId) {
+    if(model.OSMData && !model.timeoutId) {
       refreshData(model.bbox, model.startDateTime, model.endDateTime, model.project.id, model.server);
     }
   }

@@ -3,6 +3,7 @@
 import moment from 'moment';
 import PubSub from './PubSub';
 import { getAccumulatedFeatures } from './Charts';
+import { getProjectData, getBBox, getProjectContributions, getChangesets, getOSMBuildings } from './Ajax';
 
 function getCharts(startDateTime, endDateTime, OSMData) {
   const charts = {};
@@ -74,24 +75,34 @@ export function reduceState(state, action) {
         clearTimeout(state.timeoutId);
         state.timeoutId = null;
       }
+
+      const { projectId, startDateTime, endDateTime, server } = action.payload;
+      console.log(endDateTime);
       state.errorMessage = null;
       state.project = {};
-      state.project.id = action.payload.projectId;
-      state.startDateTime = action.payload.startDateTime;
-      state.endDateTime = action.payload.endDateTime;
-      state.server = action.payload.server;
+      state.project.id = projectId;
+      state.startDateTime = startDateTime;
+      state.endDateTime = endDateTime.isValid() ? endDateTime : moment();
+      state.server = server;
       state.bbox = null;
       state.changesets = null;
       state.OSMData = null;
       state.leaderboard = null;
       state.calculations = null;
+      getProjectData(projectId);
+      getBBox(projectId);
+      getProjectContributions(projectId);
+
+      PubSub.publish("DASHBOARD_RESET", state);
+
       return state;
     case 'SET_PROJECT_DATA':
       Object.assign(state.project, action.payload);
-      PubSub.publish("DATASOURCE_UPDATED_HOTOSM", state );
+      PubSub.publish("DATASOURCE_UPDATED_HOTOSM", state);
       return state;
     case 'SET_BBOX':
       state.bbox = action.payload;
+      getChangesets(state.bbox, state.startDateTime, state.endDateTime, state.project.id)
       return state;
     case 'SET_CONTRIBUTIONS_DATA':
       updateUserStats(state.dashboard.userStats, null, action.payload.userContributions);
@@ -99,6 +110,7 @@ export function reduceState(state, action) {
       return state;
     case 'SET_CHANGESETS':
       state.changesets = action.payload;
+      getOSMBuildings(state.bbox, state.startDateTime, state.endDateTime, state.server, state.changesets);
       return state;
     case 'SET_OSM_DATA_AND_LEADERBOARD':
       state.OSMData = action.payload.OSMData;

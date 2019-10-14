@@ -19,6 +19,7 @@ function subscribe(message, func) {
 }
 
 function publish(message, data) {
+  console.log("publish:", message, data);
   if(!messages.hasOwnProperty(message)) {
     return false;
   }

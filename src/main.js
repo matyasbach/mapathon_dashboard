@@ -74,7 +74,7 @@ export function reduce(state, action) {
       state.project = {};
       state.project.id = action.payload.projectId;
       state.startDateTime = action.payload.startDateTime;
-      state.endDateTime = action.payload.endDateTime;
+      state.endDateTime = action.payload.endDateTime.isValid() ? action.payload.endDateTime : moment();
       state.server = action.payload.server;
       state.bbox = null;
       state.changesets = null;

@@ -93,14 +93,13 @@ export function searchBar(model) {
         type: 'text',
         name: 'startDate',
         label: 'Start ('+getUTCOffsetFromMoment(model.startDateTime)+')',
-        value: '11/10/2019 20:00'
+        value: '14/10/2019 8:00'
       }),
       inputText({
         id: 'end-date-input',
         type: 'text',
         name: 'endDate',
-        label: 'End ('+getUTCOffsetFromMoment(model.endDateTime)+')',
-        value: '11/10/2019 20:05'
+        label: 'End ('+getUTCOffsetFromMoment(model.endDateTime)+')'
       }),
       select({
         id: 'server-select',
