@@ -144,7 +144,7 @@ function getOSMBuildingsWithCallback(bbox, startDateTime, endDateTime, server, c
 
   sendXHR(requests[0]).then(data => {//building
     OSMData[types[0]] = getFeatures(data);
-    return sendXHR(requests[1]);
+    /*return sendXHR(requests[1]);
   })
   .then(data => {//landuse
     OSMData[types[1]] = getFeatures(data);
@@ -155,7 +155,10 @@ function getOSMBuildingsWithCallback(bbox, startDateTime, endDateTime, server, c
     return sendXHR(requests[3]);
   })
   .then(data => {//waterway
-    OSMData[types[3]] = getFeatures(data);
+    OSMData[types[3]] = getFeatures(data);*/
+    OSMData.landuse =
+      OSMData.highway =
+      OSMData.waterway = { features: [] };
     callback(OSMData);
   });
 
