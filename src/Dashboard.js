@@ -63,18 +63,9 @@ export function reduceState(state, action) {
 
   switch (action.type) {
     case 'SET_ERROR':
-      state.errorMessage = action.payload.errorMessage;
-      state.loadingMessage = null;
-      state.project = null;
-      state.bbox = null;
-      state.changesets = null;
-      state.OSMData = null;
-      state.leaderboard = null;
-      if (state.timeoutId) {
-        clearTimeout(state.timeoutId);
-        state.timeoutId = null;
-      }
-      state.calculations = null;
+      // TODO: error handling
+      // - longer timeout in case of OSM API overfetching
+      // - show error somewhere
       return state;
     case 'GET_OSM_DATA':
       if (state.timeoutId) {
