@@ -9,6 +9,7 @@ import { submitReport, submitDashboard } from '../UserEvents';
 
 import { destroyHighwayMap, displayHighwayMap, updateHighwayMap } from './highwayMap';
 import { destroyOverviewMap, displayOverviewMap, onCheckboxClicked, updateOverviewMap } from './overviewMap';
+import moment from 'moment';
 
 export function header() {
   return h('header', [
@@ -42,12 +43,12 @@ export function header() {
 };
 
 export function searchBar(model) {
-  var getUTCOffsetFromMoment = function (moment)
+  var getUTCOffsetFromMoment = function (dateTime)
   {
     var valueToReturn = 'UTC';
-    if(!moment.isUtc())
+    if(!dateTime.isUtc())
     {
-      var utcOffset = moment.toDate().getTimezoneOffset();
+      var utcOffset = (dateTime.isValid() ? dateTime : moment()).toDate().getTimezoneOffset();
 
       if(utcOffset<0)
       {

@@ -45,15 +45,21 @@ export function reduceState(state, action) {
   }
 
   state = reset(state);
-  if (!state.dashboard)
+  if (!state.dashboard) {
+    state.delay = 30 * 1000,
     state.dashboard = {
       userStats: {}
     };
+  }
 
   const dataUpdate = function () {
     state.timeoutId = null;
-    PubSub.publish('ACTIONS', state);
+
+    getProjectContributions(state.project.id);
+    getChangesets(state.bbox, state.startDateTime, getEndDateTime(), state.project.id);
   };
+
+  const getEndDateTime = () => state.endDateTime.isValid() ? state.endDateTime : moment();
 
   switch (action.type) {
     case 'SET_ERROR':
@@ -82,7 +88,7 @@ export function reduceState(state, action) {
       state.project = {};
       state.project.id = projectId;
       state.startDateTime = startDateTime;
-      state.endDateTime = endDateTime.isValid() ? endDateTime : moment();
+      state.endDateTime = endDateTime;
       state.server = server;
       state.bbox = null;
       state.changesets = null;
@@ -102,7 +108,7 @@ export function reduceState(state, action) {
       return state;
     case 'SET_BBOX':
       state.bbox = action.payload;
-      getChangesets(state.bbox, state.startDateTime, state.endDateTime, state.project.id)
+      getChangesets(state.bbox, state.startDateTime, getEndDateTime(), state.project.id)
       return state;
     case 'SET_CONTRIBUTIONS_DATA':
       updateUserStats(state.dashboard.userStats, null, action.payload.userContributions);
@@ -110,13 +116,13 @@ export function reduceState(state, action) {
       return state;
     case 'SET_CHANGESETS':
       state.changesets = action.payload;
-      getOSMBuildings(state.bbox, state.startDateTime, state.endDateTime, state.server, state.changesets);
+      getOSMBuildings(state.bbox, state.startDateTime, getEndDateTime(), state.server, state.changesets);
       return state;
     case 'SET_OSM_DATA_AND_LEADERBOARD':
       state.OSMData = action.payload.OSMData;
       state.leaderboard = action.payload.leaderboard;
       state.calculations = action.payload.calculations;
-      state.dashboard.charts = getCharts(state.startDateTime, state.endDateTime, state.OSMData);
+      state.dashboard.charts = getCharts(state.startDateTime, getEndDateTime(), state.OSMData);
       state.loadingMessage = null;
       state.lastUpdateTime = moment();
       state.timeoutId = window.setTimeout(dataUpdate, state.delay);
@@ -129,7 +135,7 @@ export function reduceState(state, action) {
       state.OSMData = action.payload.OSMData;
       state.leaderboard = action.payload.leaderboard;
       state.calculations = action.payload.calculations;
-      state.dashboard.charts = getCharts(state.startDateTime, state.endDateTime, state.OSMData);
+      state.dashboard.charts = getCharts(state.startDateTime, getEndDateTime(), state.OSMData);
       state.lastUpdateTime = moment();
       state.timeoutId = window.setTimeout(dataUpdate, state.delay);
       updateUserStats(state.dashboard.userStats, state.OSMData);
