@@ -15,7 +15,7 @@ const patch = init([
   require('snabbdom/modules/style').default
 ]);
 
-let node = {};
+let odlVnode = {};
 let state = {};
 
 const initialState = {
@@ -123,13 +123,13 @@ export function updateDashboardState(msg, action) {
 }
 
 function update() {
-  const newNode = App(state);
-  patch(node, newNode);
-  node = newNode;
+  const newVnode = App(state);
+  patch(odlVnode, newVnode);
+  odlVnode = newVnode;
 }
 
 function main(initState, initVnode, App) {
-  node = initVnode;
+  odlVnode = initVnode;
   state = initState;
 
   PubSub.subscribe('ACTIONS', updateState);

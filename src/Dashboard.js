@@ -40,17 +40,14 @@ function updateUserStats(userStats, OSMData, contributions) {
 };
 
 export function reduceState(state, action) {
-  function reset(state) {
-    return state;
-  }
-
-  state = reset(state);
-  if (!state.dashboard) {
+  function reset() {
     state.delay = 30 * 1000,
     state.dashboard = {
       userStats: {}
     };
   }
+
+  if (!state.dashboard) reset();
 
   const dataUpdate = function () {
     state.timeoutId = null;
@@ -74,7 +71,7 @@ export function reduceState(state, action) {
       }
 
       const { projectId, startDateTime, endDateTime, server } = action.payload;
-      console.log(endDateTime);
+      reset();
       state.errorMessage = null;
       state.project = {};
       state.project.id = projectId;
@@ -103,7 +100,7 @@ export function reduceState(state, action) {
       return state;
     case 'SET_CONTRIBUTIONS_DATA':
       updateUserStats(state.dashboard.userStats, null, action.payload.userContributions);
-      PubSub.publish("DATASOURCE_UPDATED_HOTOSM_CONTRIB", state );
+      PubSub.publish("DATASOURCE_UPDATED_HOTOSM_CONTRIB", state);
       return state;
     case 'SET_CHANGESETS':
       state.changesets = action.payload;
@@ -119,7 +116,7 @@ export function reduceState(state, action) {
       state.timeoutId = window.setTimeout(dataUpdate, state.delay);
       updateUserStats(state.dashboard.userStats, state.OSMData);
 
-      PubSub.publish("DATASOURCE_UPDATED_OSM", state );
+      PubSub.publish("DATASOURCE_UPDATED_OSM", state);
       return state;
     case 'UPDATE_CHANGESETS_AND_OSM_DATA':
       state.changesets = action.payload.changesets;
