@@ -54,11 +54,8 @@ export function createFeatureChart (msg, model) {
 	                }
 	            }],
 	            xAxes: [{
-	                type: 'time',
-	                time: {
-	                    unit: 'minute'
-	                }
-	            }]	            
+	                type: 'time'
+	            }]
 	        }
 	    }
 	});
